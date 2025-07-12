@@ -1,9 +1,13 @@
 import streamlit as st
-from ruby_quest import RubyQuest
+import numpy as np
+from ruby_quest import RubyQuestRL
+
+
+MAX_HUNGER = 100
 
 # Initialisation du jeu
 if 'game' not in st.session_state:
-    st.session_state.game = RubyQuest()
+    st.session_state.game = RubyQuestRL()
 
 game = st.session_state.game
 
@@ -19,12 +23,11 @@ def display_grid(grid):
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    grid_display = game.get_grid()
-    st.text("\n".join(" ".join(row) for row in grid_display))
+    display_grid(game.get_grid_for_render())
 
 with col2:
     # Barre de progression de la faim
-    st.progress(game.hunger / game.max_hunger, text=f"Faim : {game.hunger}/{game.max_hunger}")
+    st.progress(game.hunger / MAX_HUNGER, text=f"Faim : {game.hunger}/{MAX_HUNGER}")
 
     if game.has_ruby:
         st.success("✅ Ruby Collecté !")
@@ -44,7 +47,7 @@ with col2:
             st.rerun()
     with col_mid[1]:
         if st.button("🛑 Reset"):
-            st.session_state.game = RubyQuest()
+            st.session_state.game = RubyQuestRL()
             st.rerun()
     with col_mid[2]:
         if st.button("➡️ Droite"):
@@ -65,5 +68,5 @@ if game.done:
     else:
         st.error("💀 Game Over !")
     if st.button("🔄 Recommencer"):
-        st.session_state.game = RubyQuest()
+        st.session_state.game = RubyQuestRL()
         st.rerun()
